@@ -1,0 +1,8 @@
+DROP TABLE IF EXISTS PB.M_PROJECT
+
+CREATE TABLE IF NOT EXISTS PB.M_PROJECT (
+    id SERIAL PRIMARY KEY,
+    proj_name VARCHAR(12) NOT NULL UNIQUE,
+    proj_description TEXT NOT NUll,
+    proj_owner UUID NOT NULL REFERENCES pb.m_user(user_id)
+);
