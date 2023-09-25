@@ -4,6 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace PBServer.Entities;
 
+#nullable disable
 [Table(name: "m_project", Schema = "pb")]
 public class ProjectEntity
 {

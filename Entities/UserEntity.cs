@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PBServer.Entities;
 
+#nullable disable
 [Table(name: "m_user", Schema = "pb")]
 public class UserEntity
 {

@@ -1,6 +1,6 @@
-using System.Collections.Immutable;
 using Microsoft.EntityFrameworkCore;
 using PBServer.Controllers;
+using PBServer.Dto;
 using PBServer.Entities;
 using PBServer.Utils;
 
@@ -32,5 +32,23 @@ public class ProjectService : IProjectService
         }
       )
       .ToListAsync();
+  }
+
+  public async Task AddUsersInProject(int id, ProjectUsersDto dto)
+  {
+    var entities = new List<ProjectUserEntity>();
+
+    foreach (var userId in dto.Users)
+    {
+      var entity = new ProjectUserEntity
+      {
+        ProjectId = id,
+        UserId = userId
+      };
+      entities.Add(entity);
+    }
+
+    await _context.ProjectUserEntities.AddRangeAsync(entities);
+    await _context.SaveChangesAsync();
   }
 }

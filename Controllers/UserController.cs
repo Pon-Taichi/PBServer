@@ -1,11 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
 using PBServer.Entities;
-using PBServer.Services;
 
 namespace PBServer.Controllers;
 
 [ApiController]
 [Route("api/users")]
+[Consumes("application/json")]
+[Produces("application/json")]
 public class UserController : ControllerBase
 {
   private IUserService _userService;
@@ -15,12 +16,14 @@ public class UserController : ControllerBase
   }
 
   [HttpGet]
+  [ProducesResponseType(200)]
   public async Task<ActionResult<UserEntity>> GetUsers()
   {
     return Ok(await _userService.GetUsers());
   }
 
   [HttpPost]
+  [ProducesResponseType(201)]
   public async Task<ActionResult> CreateUser([FromBody] UserEntity user)
   {
     // TODO: 認証サービスでidの整合性チェック

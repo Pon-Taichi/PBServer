@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PBServer.Entities;
 
+#nullable disable
 [Table("m_proj_user", Schema = "pb")]
 public class ProjectUserEntity
 {
@@ -12,7 +13,6 @@ public class ProjectUserEntity
   public int Id { get; set; }
 
   [Required]
-  [ForeignKey("id")]
   [Column("proj_id")]
   public int ProjectId { get; set; }
 
