@@ -34,6 +34,45 @@ public class ProjectService : IProjectService
       .ToListAsync();
   }
 
+  public async Task<ProjectId> CreateProject(ProjectDto dto)
+  {
+    using var transaction = await _context.Database.BeginTransactionAsync();
+    try
+    {
+      var projectEntity = new ProjectEntity
+      {
+        Name = dto.Name,
+        Description = dto.Description,
+        OwnerId = dto.Owner
+      };
+
+      await _context.ProjectEntities.AddAsync(projectEntity);
+      await _context.SaveChangesAsync();
+
+      var projUserEntities = new List<ProjectUserEntity>();
+      foreach (var userId in dto.Users)
+      {
+        var entity = new ProjectUserEntity
+        {
+          ProjectId = projectEntity.Id,
+          UserId = userId
+        };
+        projUserEntities.Add(entity);
+      }
+
+      await _context.ProjectUserEntities.AddRangeAsync(projUserEntities);
+      await _context.SaveChangesAsync();
+
+      transaction.Commit();
+
+      return new ProjectId { Id = projectEntity.Id };
+    }
+    catch (Exception)
+    {
+      await transaction.RollbackAsync();
+      throw;
+    }
+  }
   public async Task AddUsersInProject(int id, ProjectUsersDto dto)
   {
     var entities = new List<ProjectUserEntity>();

@@ -24,6 +24,15 @@ public class ProjectController : ControllerBase
     return Ok(await _projectService.GetProjects());
   }
 
+  [HttpPost]
+  [ProducesResponseType(201)]
+  public async Task<ActionResult<ProjectDto>> CreateProject([FromBody] ProjectDto dto)
+  {
+    var resBody = await _projectService.CreateProject(dto);
+    var uri = HttpContext.Request.Path.Add(new PathString($"/{resBody.Id}"));
+    return Created(uri, resBody);
+  }
+
   [HttpPost("/{id}/users")]
   [ProducesResponseType(201)]
   public async Task<ActionResult> AddUsersInProject([FromRoute] int id, [FromBody] ProjectUsersDto dto)
