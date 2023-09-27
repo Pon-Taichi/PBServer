@@ -1,99 +1,43 @@
-using Microsoft.EntityFrameworkCore;
 using PBServer.Controllers;
 using PBServer.Dto;
 using PBServer.Entities;
-using PBServer.Utils;
+using PBServer.Services.Interfaces;
 
 namespace PBServer.Services;
 
 public class ProjectService : IProjectService
 {
-  private readonly PbContext _context;
-  public ProjectService(PbContext context)
+  private readonly IProjectRepository _projectRepository;
+  private readonly IProjectUserRepository _projUserRepository;
+  public ProjectService(IProjectRepository projectRepository, IProjectUserRepository projUserRepository)
   {
-    _context = context;
+    _projectRepository = projectRepository;
+    _projUserRepository = projUserRepository;
   }
 
   public async Task<ICollection<ProjectEntity>> GetProjects()
   {
-    return await _context.ProjectEntities
-      .Include(e => e.Owner)
-      .GroupJoin(
-        _context.ProjectUserEntities.Include(e => e.User),
-        project => project.Id,
-        projUser => projUser.ProjectId,
-        (project, projUsers) => new ProjectEntity
-        {
-          Id = project.Id,
-          Name = project.Name,
-          Description = project.Description,
-          Owner = project.Owner,
-          Users = projUsers.Select(e => e.User).ToList()
-        }
-      )
-      .ToListAsync();
+    return await _projectRepository.GetProjects();
   }
 
   public async Task<ProjectEntity> GetProjectById(int id)
   {
-    return await _context.ProjectEntities
-      .Include(e => e.Owner)
-      .GroupJoin(
-        _context.ProjectUserEntities.Include(e => e.User),
-        project => project.Id,
-        projUser => projUser.ProjectId,
-        (project, projUsers) => new ProjectEntity
-        {
-          Id = project.Id,
-          Name = project.Name,
-          Description = project.Description,
-          Owner = project.Owner,
-          Users = projUsers.Select(e => e.User).ToList()
-        }
-      )
-      .FirstOrDefaultAsync(e => e.Id == id)
-       ?? throw new KeyNotFoundException();
+    return await _projectRepository.GetProjectById(id)
+      ?? throw new KeyNotFoundException();
   }
 
   public async Task<ProjectId> CreateProject(ProjectDto dto)
   {
-    using var transaction = await _context.Database.BeginTransactionAsync();
-    try
+    var projectEntity = new ProjectEntity
     {
-      var projectEntity = new ProjectEntity
-      {
-        Name = dto.Name,
-        Description = dto.Description,
-        OwnerId = dto.Owner
-      };
-
-      await _context.ProjectEntities.AddAsync(projectEntity);
-      await _context.SaveChangesAsync();
-
-      var projUserEntities = new List<ProjectUserEntity>();
-      foreach (var userId in dto.Users)
-      {
-        var entity = new ProjectUserEntity
-        {
-          ProjectId = projectEntity.Id,
-          UserId = userId
-        };
-        projUserEntities.Add(entity);
-      }
-
-      await _context.ProjectUserEntities.AddRangeAsync(projUserEntities);
-      await _context.SaveChangesAsync();
-
-      await transaction.CommitAsync();
-
-      return new ProjectId { Id = projectEntity.Id };
-    }
-    catch (Exception)
-    {
-      await transaction.RollbackAsync();
-      throw;
-    }
+      Name = dto.Name,
+      Description = dto.Description,
+      OwnerId = dto.Owner
+    };
+    var result = await _projectRepository.CreateProject(projectEntity);
+    return new ProjectId { Id = result };
   }
+
   public async Task AddUsersInProject(int id, ProjectUsersDto dto)
   {
     var entities = new List<ProjectUserEntity>();
@@ -107,32 +51,12 @@ public class ProjectService : IProjectService
       };
       entities.Add(entity);
     }
-
-    await _context.ProjectUserEntities.AddRangeAsync(entities);
-    await _context.SaveChangesAsync();
+    await _projUserRepository.AddUsersInProject(entities);
   }
 
   public async Task DeleteProjectById(int id)
   {
-    using var transaction = await _context.Database.BeginTransactionAsync();
-    try
-    {
-      var projUserEntities = await _context.ProjectUserEntities.Where(e => e.ProjectId == id).ToListAsync()
-        ?? throw new KeyNotFoundException();
-      _context.ProjectUserEntities.RemoveRange(projUserEntities);
-
-      var projEntity = await _context.ProjectEntities.FindAsync(id)
-        ?? throw new KeyNotFoundException();
-      _context.ProjectEntities.Remove(projEntity);
-      await _context.SaveChangesAsync();
-
-      await transaction.CommitAsync();
-    }
-    catch (Exception)
-    {
-      await transaction.RollbackAsync();
-      throw;
-    }
-
+    await _projUserRepository.DeleteUsersInProject(id);
+    await _projectRepository.DeleteProjectById(id);
   }
 }

@@ -1,27 +1,26 @@
 using Microsoft.EntityFrameworkCore;
 using PBServer.Controllers;
 using PBServer.Entities;
+using PBServer.Services.Interfaces;
 using PBServer.Utils;
 
 namespace PBServer.Services;
 
 public class UserService : IUserService
 {
-  private readonly PbContext _context;
-
-  public UserService(PbContext context)
+  private readonly IUserRepository _userRepository;
+  public UserService(IUserRepository userRepository)
   {
-    _context = context;
+    _userRepository = userRepository;
   }
 
   public async Task<ICollection<UserEntity>> GetUsers()
   {
-    return await _context.UserEntities.ToListAsync();
+    return await _userRepository.GetUsers();
   }
 
   public async Task CreateUser(UserEntity user)
   {
-    await _context.UserEntities.AddAsync(user);
-    await _context.SaveChangesAsync();
+    await _userRepository.CreateUser(user);
   }
 }

@@ -8,6 +8,7 @@ namespace PBServer.Entities;
 public class UserEntity
 {
   [Key]
+  [Required]
   [Column("user_id")]
   public Guid UserId { get; set; }
 

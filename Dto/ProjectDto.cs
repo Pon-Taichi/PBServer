@@ -1,11 +1,16 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace PBServer.Dto;
 
+#nullable disable
 public class ProjectDto
 {
-  public required string Name { get; set; }
-  public required string Description { get; set; }
+  [Required]
+  public string Name { get; set; }
+  [Required]
+  public string Description { get; set; }
+  [Required]
   public Guid Owner { get; set; }
-  public ICollection<Guid> Users { get; set; } = new List<Guid>();
 }
 
 public class ProjectId
