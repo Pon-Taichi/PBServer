@@ -34,6 +34,27 @@ public class ProjectService : IProjectService
       .ToListAsync();
   }
 
+  public async Task<ProjectEntity> GetProjectById(int id)
+  {
+    return await _context.ProjectEntities
+      .Include(e => e.Owner)
+      .GroupJoin(
+        _context.ProjectUserEntities.Include(e => e.User),
+        project => project.Id,
+        projUser => projUser.ProjectId,
+        (project, projUsers) => new ProjectEntity
+        {
+          Id = project.Id,
+          Name = project.Name,
+          Description = project.Description,
+          Owner = project.Owner,
+          Users = projUsers.Select(e => e.User).ToList()
+        }
+      )
+      .FirstOrDefaultAsync(e => e.Id == id)
+       ?? throw new KeyNotFoundException();
+  }
+
   public async Task<ProjectId> CreateProject(ProjectDto dto)
   {
     using var transaction = await _context.Database.BeginTransactionAsync();
@@ -63,7 +84,7 @@ public class ProjectService : IProjectService
       await _context.ProjectUserEntities.AddRangeAsync(projUserEntities);
       await _context.SaveChangesAsync();
 
-      transaction.Commit();
+      await transaction.CommitAsync();
 
       return new ProjectId { Id = projectEntity.Id };
     }
@@ -89,5 +110,29 @@ public class ProjectService : IProjectService
 
     await _context.ProjectUserEntities.AddRangeAsync(entities);
     await _context.SaveChangesAsync();
+  }
+
+  public async Task DeleteProjectById(int id)
+  {
+    using var transaction = await _context.Database.BeginTransactionAsync();
+    try
+    {
+      var projUserEntities = await _context.ProjectUserEntities.Where(e => e.ProjectId == id).ToListAsync()
+        ?? throw new KeyNotFoundException();
+      _context.ProjectUserEntities.RemoveRange(projUserEntities);
+
+      var projEntity = await _context.ProjectEntities.FindAsync(id)
+        ?? throw new KeyNotFoundException();
+      _context.ProjectEntities.Remove(projEntity);
+      await _context.SaveChangesAsync();
+
+      await transaction.CommitAsync();
+    }
+    catch (Exception)
+    {
+      await transaction.RollbackAsync();
+      throw;
+    }
+
   }
 }
