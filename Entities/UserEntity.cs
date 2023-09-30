@@ -10,9 +10,8 @@ public class UserEntity
   [Key]
   [Required]
   [Column("user_id")]
-  public Guid UserId { get; set; }
+  public string UserId { get; set; }
 
-  [Required]
   [Column("user_name")]
   public string UserName { get; set; }
 }

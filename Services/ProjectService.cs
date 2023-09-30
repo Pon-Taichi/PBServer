@@ -1,3 +1,4 @@
+using PBServer.Context;
 using PBServer.Controllers;
 using PBServer.Dto;
 using PBServer.Entities;
@@ -7,10 +8,12 @@ namespace PBServer.Services;
 
 public class ProjectService : IProjectService
 {
+  private readonly IContextProvider _context;
   private readonly IProjectRepository _projectRepository;
   private readonly IProjectUserRepository _projUserRepository;
-  public ProjectService(IProjectRepository projectRepository, IProjectUserRepository projUserRepository)
+  public ProjectService(IProjectRepository projectRepository, IProjectUserRepository projUserRepository, IContextProvider context)
   {
+    _context = context;
     _projectRepository = projectRepository;
     _projUserRepository = projUserRepository;
   }

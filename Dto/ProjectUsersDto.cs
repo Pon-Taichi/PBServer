@@ -5,5 +5,5 @@ namespace PBServer.Dto;
 public class ProjectUsersDto
 {
   [Required]
-  public ICollection<Guid> Users { get; set; } = new List<Guid>();
+  public ICollection<string> Users { get; set; } = new List<string>();
 }

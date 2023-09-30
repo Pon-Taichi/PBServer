@@ -18,7 +18,7 @@ public class ProjectUserEntity
 
   [Required]
   [Column("user_id")]
-  public Guid UserId { get; set; }
+  public string UserId { get; set; }
 
   public UserEntity User { get; set; }
   public ProjectEntity Project { get; set; }

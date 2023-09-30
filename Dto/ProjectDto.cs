@@ -10,7 +10,7 @@ public class ProjectDto
   [Required]
   public string Description { get; set; }
   [Required]
-  public Guid Owner { get; set; }
+  public string Owner { get; set; }
 }
 
 public class ProjectId

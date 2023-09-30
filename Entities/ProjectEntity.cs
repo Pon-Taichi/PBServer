@@ -24,7 +24,7 @@ public class ProjectEntity
   [Required]
   [Column(name: "proj_owner")]
   [JsonIgnore]
-  public Guid OwnerId { get; set; }
+  public string OwnerId { get; set; }
 
   public UserEntity Owner { get; set; }
 
