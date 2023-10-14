@@ -4,6 +4,6 @@ namespace PBServer.Services.Interfaces;
 
 public interface IProjectUserRepository
 {
-  Task AddUsersInProject(ICollection<ProjectUserEntity> users);
-  Task DeleteUsersInProject(int id);
+  void AddUsersInProject(ICollection<ProjectUserEntity> users);
+  void DeleteUsersInProject(int id);
 }

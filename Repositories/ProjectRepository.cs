@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using PBServer.Dto;
 using PBServer.Entities;
 using PBServer.Services.Interfaces;
 using PBServer.Utils;
@@ -14,24 +13,24 @@ public class ProjectRepository : IProjectRepository
     _context = context;
   }
 
-  public async Task<int> CreateProject(ProjectEntity project)
+  public int CreateProject(ProjectEntity project)
   {
-    await _context.ProjectEntities.AddAsync(project);
-    await _context.SaveChangesAsync();
+    _context.ProjectEntities.Add(project);
+    _context.SaveChanges();
     return project.Id;
   }
 
-  public async Task DeleteProjectById(int id)
+  public void DeleteProjectById(int id)
   {
-    var projEntity = await _context.ProjectEntities.FindAsync(id)
+    var projEntity = _context.ProjectEntities.Find(id)
         ?? throw new KeyNotFoundException();
     _context.ProjectEntities.Remove(projEntity);
-    await _context.SaveChangesAsync();
+    _context.SaveChangesAsync();
   }
 
-  public async Task<ProjectEntity?> GetProjectById(int id)
+  public ProjectEntity? GetProjectById(int id)
   {
-    return await _context.ProjectEntities
+    return _context.ProjectEntities
       .Include(e => e.Owner)
       .GroupJoin(
         _context.ProjectUserEntities.Include(e => e.User),
@@ -46,12 +45,12 @@ public class ProjectRepository : IProjectRepository
           Users = projUsers.Select(e => e.User).ToList()
         }
       )
-      .FirstOrDefaultAsync(e => e.Id == id);
+      .FirstOrDefault(e => e.Id == id);
   }
 
-  public async Task<ICollection<ProjectEntity>> GetProjects()
+  public ICollection<ProjectEntity> GetProjects()
   {
-    return await _context.ProjectEntities
+    return _context.ProjectEntities
       .Include(e => e.Owner)
       .GroupJoin(
         _context.ProjectUserEntities.Include(e => e.User),
@@ -66,6 +65,6 @@ public class ProjectRepository : IProjectRepository
           Users = projUsers.Select(e => e.User).ToList()
         }
       )
-      .ToListAsync();
+      .ToList();
   }
 }

@@ -4,8 +4,8 @@ namespace PBServer.Services.Interfaces;
 
 public interface IProjectRepository
 {
-  Task<ICollection<ProjectEntity>> GetProjects();
-  Task<ProjectEntity?> GetProjectById(int id);
-  Task<int> CreateProject(ProjectEntity project);
-  Task DeleteProjectById(int id);
+  ICollection<ProjectEntity> GetProjects();
+  ProjectEntity? GetProjectById(int id);
+  int CreateProject(ProjectEntity project);
+  void DeleteProjectById(int id);
 }

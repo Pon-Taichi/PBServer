@@ -5,9 +5,9 @@ namespace PBServer.Controllers;
 
 public interface IProjectService
 {
-  public Task<ICollection<ProjectEntity>> GetProjects();
-  public Task<ProjectEntity> GetProjectById(int id);
-  public Task<ProjectId> CreateProject(ProjectDto dto);
-  public Task AddUsersInProject(int id, ProjectUsersDto dto);
-  public Task DeleteProjectById(int id);
+  public ICollection<ProjectEntity> GetProjects();
+  public ProjectEntity GetProjectById(int id);
+  public ProjectId CreateProject(ProjectDto dto);
+  public void AddUsersInProject(int id, ProjectUsersDto dto);
+  public void DeleteProjectById(int id);
 }

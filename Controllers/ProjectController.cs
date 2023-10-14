@@ -19,43 +19,43 @@ public class ProjectController : ControllerBase
 
   [HttpGet]
   [ProducesResponseType(200)]
-  public async Task<ActionResult<IEnumerable<ProjectEntity>>> GetProjectList()
+  public ActionResult<IEnumerable<ProjectEntity>> GetProjectList()
   {
-    return Ok(await _projectService.GetProjects());
+    return Ok(_projectService.GetProjects());
   }
 
   [HttpGet("{id}")]
   [ProducesResponseType(200)]
-  public async Task<ActionResult<ProjectEntity>> GetProjectById([FromRoute] int id)
+  public ActionResult<ProjectEntity> GetProjectById([FromRoute] int id)
   {
-    return Ok(await _projectService.GetProjectById(id));
+    return Ok(_projectService.GetProjectById(id));
   }
 
   [HttpPost]
   [ProducesResponseType(201)]
-  public async Task<ActionResult<ProjectDto>> CreateProject([FromBody] ProjectDto dto)
+  public ActionResult<ProjectDto> CreateProject([FromBody] ProjectDto dto)
   {
-    var resBody = await _projectService.CreateProject(dto);
+    var resBody = _projectService.CreateProject(dto);
     var uri = HttpContext.Request.Path.Add(new PathString($"/{resBody.Id}"));
     return Created(uri, resBody);
   }
 
   [HttpPost("{id}/users")]
   [ProducesResponseType(201)]
-  public async Task<ActionResult> AddUsersInProject([FromRoute] int id, [FromBody] ProjectUsersDto dto)
+  public ActionResult AddUsersInProject([FromRoute] int id, [FromBody] ProjectUsersDto dto)
   {
-    await _projectService.AddUsersInProject(id, dto);
+    _projectService.AddUsersInProject(id, dto);
     var uri = HttpContext.Request.Path;
     return Created(uri, null);
   }
 
   [HttpDelete("{id}")]
   [ProducesResponseType(204)]
-  public async Task<ActionResult> DeleteProjectById([FromRoute] int id)
+  public ActionResult DeleteProjectById([FromRoute] int id)
   {
     try
     {
-      await _projectService.DeleteProjectById(id);
+      _projectService.DeleteProjectById(id);
       return NoContent();
     }
     catch (KeyNotFoundException)

@@ -12,13 +12,13 @@ public class UserService : IUserService
     _userRepository = userRepository;
   }
 
-  public async Task<ICollection<UserEntity>> GetUsers()
+  public ICollection<UserEntity> GetUsers()
   {
-    return await _userRepository.GetUsers();
+    return _userRepository.GetUsers();
   }
 
-  public async Task CreateUser(UserEntity user)
+  public void CreateUser(UserEntity user)
   {
-    await _userRepository.CreateUser(user);
+    _userRepository.CreateUser(user);
   }
 }

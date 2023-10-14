@@ -13,15 +13,15 @@ public class ProjectUserRepository : IProjectUserRepository
     _context = context;
   }
 
-  public async Task AddUsersInProject(ICollection<ProjectUserEntity> users)
+  public void AddUsersInProject(ICollection<ProjectUserEntity> users)
   {
-    await _context.ProjectUserEntities.AddRangeAsync(users);
-    await _context.SaveChangesAsync();
+    _context.ProjectUserEntities.AddRangeAsync(users);
+    _context.SaveChangesAsync();
   }
 
-  public async Task DeleteUsersInProject(int id)
+  public void DeleteUsersInProject(int id)
   {
-    var projUserEntities = await _context.ProjectUserEntities.Where(e => e.ProjectId == id).ToListAsync()
+    var projUserEntities = _context.ProjectUserEntities.Where(e => e.ProjectId == id).ToList()
       ?? throw new KeyNotFoundException();
     _context.ProjectUserEntities.RemoveRange(projUserEntities);
   }

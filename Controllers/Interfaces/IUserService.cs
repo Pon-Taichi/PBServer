@@ -4,6 +4,6 @@ namespace PBServer.Controllers;
 
 public interface IUserService
 {
-  public Task<ICollection<UserEntity>> GetUsers();
-  public Task CreateUser(UserEntity user);
+  public ICollection<UserEntity> GetUsers();
+  public void CreateUser(UserEntity user);
 }

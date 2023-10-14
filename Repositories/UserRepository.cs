@@ -14,14 +14,14 @@ public class UserRepository : IUserRepository
     _context = context;
   }
 
-  public async Task CreateUser(UserEntity user)
+  public void CreateUser(UserEntity user)
   {
-    await _context.UserEntities.AddAsync(user);
-    await _context.SaveChangesAsync();
+    _context.UserEntities.Add(user);
+    _context.SaveChanges();
   }
 
-  public async Task<ICollection<UserEntity>> GetUsers()
+  public ICollection<UserEntity> GetUsers()
   {
-    return await _context.UserEntities.ToListAsync();
+    return _context.UserEntities.ToList();
   }
 }

@@ -19,11 +19,10 @@
       //   "action": "openExternally",
       //   "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
       // },
-      "launchSettingsProfile": "https",
+      "launchSettingsProfile": "https"
       // "env": {
       //   "ASPNETCORE_ENVIRONMENT": "Development"
       // },
-      "console": "integratedTerminal"
     }
   ]
 }

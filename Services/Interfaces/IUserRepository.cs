@@ -4,6 +4,6 @@ namespace PBServer.Services.Interfaces;
 
 public interface IUserRepository
 {
-  Task<ICollection<UserEntity>> GetUsers();
-  Task CreateUser(UserEntity user);
+  ICollection<UserEntity> GetUsers();
+  void CreateUser(UserEntity user);
 }

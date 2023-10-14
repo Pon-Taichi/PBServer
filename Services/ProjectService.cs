@@ -18,18 +18,18 @@ public class ProjectService : IProjectService
     _projUserRepository = projUserRepository;
   }
 
-  public async Task<ICollection<ProjectEntity>> GetProjects()
+  public ICollection<ProjectEntity> GetProjects()
   {
-    return await _projectRepository.GetProjects();
+    return _projectRepository.GetProjects();
   }
 
-  public async Task<ProjectEntity> GetProjectById(int id)
+  public ProjectEntity GetProjectById(int id)
   {
-    return await _projectRepository.GetProjectById(id)
+    return _projectRepository.GetProjectById(id)
       ?? throw new KeyNotFoundException();
   }
 
-  public async Task<ProjectId> CreateProject(ProjectDto dto)
+  public ProjectId CreateProject(ProjectDto dto)
   {
     var projectEntity = new ProjectEntity
     {
@@ -37,11 +37,11 @@ public class ProjectService : IProjectService
       Description = dto.Description,
       OwnerId = dto.Owner
     };
-    var result = await _projectRepository.CreateProject(projectEntity);
+    var result = _projectRepository.CreateProject(projectEntity);
     return new ProjectId { Id = result };
   }
 
-  public async Task AddUsersInProject(int id, ProjectUsersDto dto)
+  public void AddUsersInProject(int id, ProjectUsersDto dto)
   {
     var entities = new List<ProjectUserEntity>();
 
@@ -54,12 +54,12 @@ public class ProjectService : IProjectService
       };
       entities.Add(entity);
     }
-    await _projUserRepository.AddUsersInProject(entities);
+    _projUserRepository.AddUsersInProject(entities);
   }
 
-  public async Task DeleteProjectById(int id)
+  public void DeleteProjectById(int id)
   {
-    await _projUserRepository.DeleteUsersInProject(id);
-    await _projectRepository.DeleteProjectById(id);
+    _projUserRepository.DeleteUsersInProject(id);
+    _projectRepository.DeleteProjectById(id);
   }
 }
